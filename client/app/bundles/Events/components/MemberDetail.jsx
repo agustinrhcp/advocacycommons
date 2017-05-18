@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import GroupLink from './GroupLink';
+import UpcomingEvent from './UpcomingEvent';
 import { fetchMember } from '../actions';
 
 class MemberDetail extends Component {
@@ -10,19 +12,54 @@ class MemberDetail extends Component {
     this.props.fetchMember(id)
   }
 
+  renderGroups() {
+    const { groups, attributes } = this.props.member;
+
+    if (groups.length)
+      return groups.map(group => <GroupLink key={group.data.id} group={group} />)
+  }
+
+  renderEvents() {
+    const { events, attributes } = this.props.member;
+
+    if (events && events.length)
+      return events.map(event => <UpcomingEvent key={event.data.id} event={event.data} />)
+
+    return <div>{`${this.memberFullName(attributes)} hasn't RSVPed any event yet.`}</div>
+  }
+
+  memberFullName(attributes) {
+    return `${attributes['given-name']} ${attributes['family-name']} `
+  }
+
   render() {
     const { member } = this.props;
+    const { groups, attributes } = member;
 
-    if (!member.attributes)
+    if (!attributes)
       return null;
 
-    console.log(member);
-    const { attributes } = member;
     return (
       <div>
-        <h1>{`${attributes['given-name']} ${attributes['family-name']} `}</h1>
-        <br/>
-        <h2> Events attended </h2>
+        <h1>{this.memberFullName(attributes)}</h1>
+        <a href={`mailto:${attributes['primary-email-address']}`}>
+          {attributes['primary-email-address']}
+        </a>
+
+        <br />
+        <br />
+
+        <div>
+          <h4> Groups </h4>
+          {this.renderGroups()}
+        </div>
+
+        <br />
+        <div>
+          <h4> Events </h4>
+          {this.renderEvents()}
+        </div>
+
         <br/>
         <Link to='/members'>
           <button className='btn btn-primary'>Back to Members</button>

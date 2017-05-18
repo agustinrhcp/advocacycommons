@@ -21,7 +21,7 @@ class MembersController < ApplicationController
       format.html
       format.json do
         person = Person.find(params[:id])
-        render json: JsonApi::PeopleRepresenter.new(person).to_json
+        render json: JsonApi::PersonWithGroupsAndEventsRepresenter.new(person).to_json
       end
     end
   end

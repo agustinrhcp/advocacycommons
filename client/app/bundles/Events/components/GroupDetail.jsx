@@ -11,7 +11,7 @@ class GroupDetail extends Component {
     this.props.fetchGroup(groupId);
   }
 
-  upcoming_events() {
+  renderUpcomingEvents() {
     const groupRelationships = this.props.group.relationships;
 
     if (!groupRelationships || !groupRelationships['upcoming-events'].data.length)
@@ -37,7 +37,7 @@ class GroupDetail extends Component {
               <h3><i className='fa fa-calendar'/> Upcoming Events</h3>
               <br/>
               <div className='list-group'>
-                {this.upcoming_events()}
+                {this.renderUpcomingEvents()}
               </div>
             </div>
           </div>
