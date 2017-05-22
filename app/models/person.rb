@@ -29,6 +29,8 @@ class Person < ApplicationRecord
 
   attr_accessor :attended_events_count #NOTE ROAR purpose
 
+  after_create :export_to_action_network
+
   scope :by_email, -> (email) do
     includes(:email_addresses).where(email_addresses: { address: email })
   end
@@ -111,6 +113,17 @@ class Person < ApplicationRecord
   def self.add_event_attended(people, current_group)
     people.each do |person|
       person.attended_events_count = person.attended_group_events_count(current_group)
+    end
+  end
+
+  private
+
+  def export_to_action_network
+    groups.each do |group|
+      Api::ActionNetwork::Person.export!(self, group)
+      attendances.each do |attendance|
+        Api::ActionNetwork::Attendance.export!(attendance, group)
+      end
     end
   end
 end
